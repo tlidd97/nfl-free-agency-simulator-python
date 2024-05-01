@@ -1,0 +1,59 @@
+import random
+
+class Player:
+    def __init__(self, name, position, overall_rating, contract_status):
+        self.name = name
+        self.position = position
+        self.overall_rating = overall_rating
+        self.contract_status = contract_status
+
+class Team:
+    def __init__(self, name, salary_cap=100):
+        self.name = name
+        self.salary_cap = salary_cap
+        self.roster = []
+
+    def make_offer(self, player, years, salary):
+        if salary * years <= self.salary_cap:
+            print(f"{self.name} makes an offer to {player.name}: {years} years, ${salary}M per year")
+            return True
+        else:
+            print(f"{self.name} cannot afford to make an offer to {player.name}")
+            return False
+
+    def sign_player(self, player, contract):
+        if player in self.roster:
+            print(f"{player.name} is already on {self.name}'s roster")
+            return False
+        else:
+            self.roster.append(player)
+            print(f"{player.name} signs with {self.name} for {contract['years']} years, ${contract['salary']}M per year")
+            return True
+
+def simulate_free_agency(players, teams):
+    for player in players:
+        offers_received = []
+        for team in teams:
+            years = random.randint(1, 5)
+            salary = random.randint(5, 20)
+            if team.make_offer(player, years, salary):
+                offers_received.append((team, {"years": years, "salary": salary}))
+        
+        if offers_received:
+            best_offer = max(offers_received, key=lambda x: x[1]["salary"])  # Choose the offer with the highest salary #
+            best_offer[0].sign_player(player, best_offer[1])
+        else:
+            print(f"No offers received for {player.name}")
+
+# Example contract offers #
+player1 = Player("Tom Brady", "QB", 95, "Unrestricted Free Agent")
+player2 = Player("Aaron Donald", "DT", 99, "Unrestricted Free Agent")
+
+team1 = Team("New England Patriots", salary_cap=120)
+team2 = Team("Los Angeles Rams", salary_cap=100)
+team3 = Team("Dallas Cowboys", salary_cap=90)
+
+players = [player1, player2]
+teams = [team1, team2, team3]
+
+simulate_free_agency(players, teams)
